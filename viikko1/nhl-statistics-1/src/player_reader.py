@@ -4,8 +4,7 @@ from player import Player
 
 # anna konstruktoriparametrina osoite mistä hakea pelaajien tiedot
 class PlayerReader:
-    def __init__(self):
-        url = "https://studies.cs.helsinki.fi/nhlstats/2022-23/players.txt"
+    def __init__(self, url):
         self._url = url
 
     def get_players(self):
