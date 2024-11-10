@@ -1,3 +1,3 @@
-# palautusrepositorio
+## git-harjoituksia
 
-[https://github.com/ileskaa/ohtuvarasto](https://github.com/ileskaa/ohtuvarasto)
+Harjoitellaan branchien käyttöä
