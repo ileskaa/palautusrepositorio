@@ -6,7 +6,8 @@ class Player:
         self.goals = dict['goals']
         self.team = dict['team']
         self.games = dict['games']
-        self.id = dict['id']
+        if "id" in dict:
+            self.id = dict['id']
 
     def __str__(self):
         playerstr = f"{self.name:20} team {self.team} goals {self.goals} assists {self.assists}"
