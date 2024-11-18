@@ -52,6 +52,8 @@ class TestKauppa(unittest.TestCase):
     def test_metodia_tilisiirto_kutsutaan_oikeilla_arvoilla(self):
         TILINUMERO = "12345"
         MAIDON_HINTA = 5
+        viite = self.viitegeneraattori_mock.uusi()
+
         # tehdään ostokset
         self.kauppa.aloita_asiointi()
         self.kauppa.lisaa_koriin(1)
@@ -59,7 +61,7 @@ class TestKauppa(unittest.TestCase):
 
         self.pankki_mock.tilisiirto.assert_called_with(
             "pekka",
-            self.viitegeneraattori_mock.uusi(),
+            viite,
             TILINUMERO,
             self.kauppa._kaupan_tili,
             MAIDON_HINTA
@@ -115,4 +117,50 @@ class TestKauppa(unittest.TestCase):
             TILINUMERO,
             self.kauppa._kaupan_tili,
             MAIDON_HINTA
+        )
+
+    def test_metodi_aloita_asiointi_nollaa_tiedot(self):
+        TILINUMERO = "12345"
+        LEIVAN_HINTA = 4
+
+        self.kauppa.aloita_asiointi()
+        self.kauppa.lisaa_koriin(1)
+        self.kauppa.tilimaksu("pekka", "12345")
+
+        self.kauppa.aloita_asiointi()
+        self.kauppa.lisaa_koriin(2)
+        self.kauppa.tilimaksu("pekka", "12345")
+
+        self.pankki_mock.tilisiirto.assert_called_with(
+            "pekka",
+            self.viitegeneraattori_mock.uusi(),
+            TILINUMERO,
+            self.kauppa._kaupan_tili,
+            LEIVAN_HINTA
+        )
+
+    def test_kauppa_pyytaa_uuden_viitenumeron_jokaiselle_maksutapahtumalle(self):
+        # tehdään ostokset
+        self.kauppa.aloita_asiointi()
+        self.kauppa.lisaa_koriin(1)
+        self.kauppa.tilimaksu("pekka", "12345")
+
+        self.viitegeneraattori_mock.uusi.assert_called()
+
+    def test_kaupan_metodi_poista_korista_toimii(self):
+        self.kauppa.aloita_asiointi()
+        self.kauppa.lisaa_koriin(1)
+        self.kauppa.poista_korista(1)
+        self.kauppa.tilimaksu("pekka", "12345")
+
+        TILINUMERO = "12345"
+        KORIN_HINTA = 0
+        viite = self.viitegeneraattori_mock.uusi()
+
+        self.pankki_mock.tilisiirto.assert_called_with(
+            "pekka",
+            viite,
+            TILINUMERO,
+            self.kauppa._kaupan_tili,
+            KORIN_HINTA
         )
